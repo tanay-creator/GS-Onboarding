@@ -30,10 +30,12 @@ def create_command(payload: CommandRequest):
     :param payload: The data used to create an item
     :return: returns a json object with field of "data" under which there is the payload now pulled from the database 
     """
-    # TODO:(Member) Implement this endpoint
-                      
-
-
+    # assume COMMAND is a list or dict storing command objects
+    new_id = len(COMMAND) + 1
+    item = {"id": new_id, **payload.dict()}
+    COMMAND.append(item)
+    return{"data": item}
+        
 @command_router.delete("/{id}", response_model=CommandListResponse)
 def delete_command(id: int):
     """
@@ -42,4 +44,8 @@ def delete_command(id: int):
     :param id: The id of the item to delete
     :return: returns the list of commands after deleting the item
     """
-    # TODO:(Member) Implement this endpoint
+   for idx, cmd in enumerate(COMMAND):
+       if cmd["id"] == id:
+           del COMMAND[idx]
+           return{"data":COMMAND}
+    raise HTTPException(status_code=404, detail = f"Command with id = {id} not found")
